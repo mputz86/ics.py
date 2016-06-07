@@ -135,10 +135,7 @@ class Event(Component):
             # return the beginning + duration
             return self.begin + self._duration
         elif self._end_time:  # if end is time defined
-            if self.all_day:
-                return self._end_time + timedelta(days=1)
-            else:
-                return self._end_time
+            return self._end_time
         elif self._begin:  # if end is not defined
             if self.all_day:
                 return self._begin + timedelta(days=1)
