@@ -19,11 +19,16 @@ tzutc = arrow.utcnow().tzinfo
 tzutc = arrow.utcnow().tzinfo
 
 
-def remove_x(container):
+def remove_lines_starting_with(container, start_strings):
     for i in reversed(range(len(container))):
         item = container[i]
-        if item.name.startswith('X-'):
-            del container[i]
+        for start_string in start_strings:
+            if item.name.startswith(start_string):
+                del container[i]
+
+
+def remove_x(container):
+    remove_lines_starting_with(container, 'X-')
 
 
 def iso_to_arrow(time_container, available_tz={}):

@@ -9,6 +9,7 @@ from six.moves import filter, map, range
 from dateutil.tz import tzical
 import copy
 import collections
+import string
 
 from .component import Component
 from .timeline import Timeline
@@ -19,7 +20,7 @@ from .parse import (
     ContentLine,
     Container,
 )
-from .utils import remove_x
+from .utils import remove_lines_starting_with
 
 
 class Calendar(Component):
@@ -186,10 +187,20 @@ def timezone(calendar, vtimezones):
 
     Parses them and adds them to calendar._timezones.
     """
+    timezone_idx = 0
     for vtimezone in vtimezones:
-        remove_x(vtimezone)  # Remove non standard lines from the block
+        remove_lines_starting_with(vtimezone, ['X-', 'SEQUENCE'])  # Remove non standard lines from the block
+        vtimezone_str = str(vtimezone)
+        if "\nTZID:" not in vtimezone_str:
+            insert_place = string.split(vtimezone_str, '\n', 1)
+            vtimezone_str = "{}\n{}\n{}".format(insert_place[0],
+                "TZID:uniqueTzId{}".format(timezone_idx),
+                insert_place[1])
+
+        timezone_idx = timezone_idx + 1
+
         fake_file = StringIO()
-        fake_file.write(str(vtimezone))  # Represent the block as a string
+        fake_file.write(vtimezone_str)  # Represent the block as a string
         fake_file.seek(0)
         timezones = tzical(fake_file)  # tzical does not like strings
         # timezones is a tzical object and could contain multiple timezones
