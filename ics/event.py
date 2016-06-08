@@ -156,6 +156,14 @@ class Event(Component):
             self._duration = None
 
     @property
+    def access_class(self):
+        if self._access_class:
+            return self._access_class
+        else:
+            return None
+
+
+    @property
     def duration(self):
         """Get or set the duration of the event.
 
@@ -348,6 +356,11 @@ def end(event, line):
         tz_dict = event._classmethod_kwargs['tz']
         event._end_time = iso_to_arrow(line, tz_dict)
         # one could also save the end_precision to check that if begin_precision is day, end_precision also is
+
+
+@Event._extracts('CLASS')
+def access_class(event, line):
+    event._access_class = unescape_string(line.value) if line else None
 
 
 @Event._extracts('SUMMARY')
