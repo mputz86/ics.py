@@ -69,7 +69,7 @@ class ContentLine:
         key, value = splitted[0], splitted[1].strip()
 
         # Separate name and params
-        splitted = key.split(';')
+        splitted = key.split('^\;')
         name, params_strings = splitted[0], splitted[1:]
 
         # Separate key and values for params
